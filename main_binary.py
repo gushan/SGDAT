@@ -214,11 +214,8 @@ def main():
         for p in list(model.parameters()):
             if hasattr(p,'org'):
                 bin_parameters.append(p)  
-                p.flip_num_epoch = torch.zeros_like(p.data)
             else:
                 fp_parameters.append(p)
-            if hasattr(p,'epoch'):
-                p.epoch = epoch
 
         bin_optimizer = torch.optim.Adam(bin_parameters, lr=0.001)
         fp_optimizer = torch.optim.Adam(fp_parameters, lr=0.001)
@@ -322,22 +319,6 @@ def forward(data_loader, model, criterion, epoch=0, training=True,  bin_optimize
 
 
             binarize_model(model,args.threshold,args.binarization)
-
-            flip_num = 0 
-            e_num = 0
-            flip_nonzeor_num = 0
-            for p in list(model.parameters()):
-                if hasattr(p,'org'):
-                    flip_num_step = torch.ne(torch.sign(p.pre_binary_data),torch.sign(p.data))
-                    if hasattr(p,'flip_num_step'):
-                        p.flip_num_step = flip_num_step
-                    if hasattr(p,'flip_num_epoch'):
-                        flip_num = flip_num + torch.sum(flip_num_step) 
-                        flip_nonzeor_num = flip_nonzeor_num + torch.sum(torch.where(flip_num_step>0,1,0)) 
-                        e_num = e_num + p.numel()
-                        p.flip_num_epoch.add_(flip_num_step)
-
-            step_num = epoch*len(data_loader)+i
 
 
         # measure elapsed time

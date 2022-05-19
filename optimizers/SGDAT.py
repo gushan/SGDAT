@@ -38,9 +38,7 @@ class SGDAT(Optimizer):
                         if len(state) == 0:
                             state['flip_num'] = torch.zeros_like(p, memory_format=torch.preserve_format)
                             state['exp_avg'] = torch.zeros_like(p, memory_format=torch.preserve_format)
-                            state['step'] = 0
 
-                        state['step'] += 1
                         lr=group['lr']
                         threshold=group['threshold']
                         weight_decay=group['weight_decay']
@@ -50,7 +48,7 @@ class SGDAT(Optimizer):
                         nesterov = group['nesterov']
                         flip_num = state['flip_num']
                         exp_avg = state['exp_avg']
-                        step = state['step']
+                        pre_binary_data = p.data
                         
                         if not hasattr(p,'m'):
                             p.m = torch.zeros_like(p, memory_format=torch.preserve_format)
@@ -71,7 +69,9 @@ class SGDAT(Optimizer):
                         else:
                             d_p = exp_avg
 
-                        p.m.add_(d_p, alpha=-lr)      
-                        p.data = torch.sign(torch.sign(torch.where(p.m.abs()>(threshold*flip_num+eps), p.m, p.pre_binary_data)).add(0.1)) 
-                        flip_num.add_(torch.ne(torch.sign(p.data),p.pre_binary_data)) 
+                        p.m.add_(d_p, alpha=-lr)    
+
+
+                        p.data = torch.sign(torch.sign(torch.where(p.m.abs()>(threshold*flip_num+eps), p.m, pre_binary_data)).add(0.1)) 
+                        flip_num.add_(torch.ne(torch.sign(p.data),pre_binary_data)) 
         return loss

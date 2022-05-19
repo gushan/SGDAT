@@ -69,6 +69,6 @@ class Bop(Optimizer):
                     state['step'] += 1
 
                     p.m.mul_(1-gamma).add_(grad, alpha=gamma)
-                    p.data = torch.sign(torch.sign(-torch.sign(p.pre_binary_data.mul(m).add(-threshold)).mul(p.pre_binary_data)).add(0.1))
+                    p.data = torch.sign(torch.sign(-torch.sign(p.data.mul(m).add(-threshold)).mul(p.data)).add(0.1))
 
         return loss
