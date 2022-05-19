@@ -7,10 +7,10 @@ from typing import List, Optional
 
 class SGDAT(Optimizer):
 
-    def __init__(self, params, lr=1e-4, threshold=1e-6, weight_decay = 0, momentum = 0, nesterov=False, dampening=0, alpha=0):
+    def __init__(self, params, lr=1e-4, threshold=1e-6, weight_decay = 0, momentum = 0, nesterov=False, dampening=0, eps=0):
         if not 0.0 <= lr:
             raise ValueError("Invalid learning rate: {}".format(lr))
-        defaults = dict(lr=lr, threshold=threshold, weight_decay=weight_decay, momentum=momentum, nesterov=nesterov, dampening=dampening, alpha=alpha)
+        defaults = dict(lr=lr, threshold=threshold, weight_decay=weight_decay, momentum=momentum, nesterov=nesterov, dampening=dampening, eps=eps)
         super(SGDAT, self).__init__(params, defaults)
 
     @torch.no_grad()
@@ -44,7 +44,7 @@ class SGDAT(Optimizer):
                         lr=group['lr']
                         threshold=group['threshold']
                         weight_decay=group['weight_decay']
-                        alpha=group['alpha']
+                        eps=group['eps']
                         dampening=group['dampening']
                         momentum=group['momentum']
                         nesterov = group['nesterov']
@@ -72,6 +72,6 @@ class SGDAT(Optimizer):
                             d_p = exp_avg
 
                         p.m.add_(d_p, alpha=-lr)      
-                        p.data = torch.sign(torch.sign(torch.where(p.m.abs()>(threshold*flip_num+alpha), p.m, p.pre_binary_data)).add(0.1)) 
+                        p.data = torch.sign(torch.sign(torch.where(p.m.abs()>(threshold*flip_num+eps), p.m, p.pre_binary_data)).add(0.1)) 
                         flip_num.add_(torch.ne(torch.sign(p.data),p.pre_binary_data)) 
         return loss
