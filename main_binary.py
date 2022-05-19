@@ -41,8 +41,6 @@ parser = argparse.ArgumentParser(description='PyTorch ConvNet Training')
 
 parser.add_argument('--results_dir', metavar='RESULTS_DIR', default='./results',
                     help='results dir')
-parser.add_argument('--runs_dir', '-r', metavar='TENSORBOARD_DIR', default='',
-                    help='tensorboard dir')
 parser.add_argument('--save', metavar='SAVE', default='',
                     help='saved folder')
 parser.add_argument('--dataset', metavar='DATASET', default='imagenet',
