@@ -7,7 +7,7 @@ from typing import List, Optional
 
 class SGDAT(Optimizer):
 
-    def __init__(self, params, lr=1e-3, threshold=0, weight_decay = 0, momentum = 0, nesterov=False, dampening=0, alpha=0):
+    def __init__(self, params, lr=1e-4, threshold=1e-6, weight_decay = 0, momentum = 0, nesterov=False, dampening=0, alpha=0):
         if not 0.0 <= lr:
             raise ValueError("Invalid learning rate: {}".format(lr))
         defaults = dict(lr=lr, threshold=threshold, weight_decay=weight_decay, momentum=momentum, nesterov=nesterov, dampening=dampening, alpha=alpha)
