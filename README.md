@@ -1,5 +1,5 @@
 # SGDAT
-SGDAT: An Optimization Method for Binary Neural Networks
+Implementation for paper "SGDAT: An Optimization Method for Binary Neural Networks".
 
 The code is based on https://github.com/itayhubara/BinaryNet.pytorch.  
 Please install torch and torchvision by following the instructions at: http://pytorch.org/.   
