@@ -52,23 +52,15 @@ class Bop(Optimizer):
                 if p.grad is None:
                     continue
 
-                # Bop optimizer
                 if hasattr(p,'org'):
                     grad = p.grad.data
-
-                    state = self.state[p]
-                    if len(state) == 0:
-                        state['step'] = 0
 
                     if not hasattr(p,'m'):
                         p.m = torch.zeros_like(p, memory_format=torch.preserve_format)
 
                     gamma= group['gamma']
                     threshold = group['threshold']
-                    m = p.m
-                    state['step'] += 1
-
+                    
                     p.m.mul_(1-gamma).add_(grad, alpha=gamma)
-                    p.data = torch.sign(torch.sign(-torch.sign(p.data.mul(m).add(-threshold)).mul(p.data)).add(0.1))
-
+                    p.data = torch.sign(torch.sign(-torch.sign(p.pre_binary_data.mul(p.m).add(-threshold)).mul(p.pre_binary_data)).add(0.1))
         return loss

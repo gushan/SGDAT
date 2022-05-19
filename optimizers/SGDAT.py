@@ -39,6 +39,9 @@ class SGDAT(Optimizer):
                             state['flip_num'] = torch.zeros_like(p, memory_format=torch.preserve_format)
                             state['exp_avg'] = torch.zeros_like(p, memory_format=torch.preserve_format)
 
+                        if not hasattr(p,'m'):
+                            p.m = torch.zeros_like(p, memory_format=torch.preserve_format)
+
                         lr=group['lr']
                         threshold=group['threshold']
                         weight_decay=group['weight_decay']
@@ -48,12 +51,8 @@ class SGDAT(Optimizer):
                         nesterov = group['nesterov']
                         flip_num = state['flip_num']
                         exp_avg = state['exp_avg']
-                        pre_binary_data = p.data
+                        d_p = grad
                         
-                        if not hasattr(p,'m'):
-                            p.m = torch.zeros_like(p, memory_format=torch.preserve_format)
-                        if not hasattr(p,'exp_avg_flip'):
-                            p.exp_avg_flip = torch.zeros_like(p, memory_format=torch.preserve_format)
                         
 
                         if weight_decay != 0:
@@ -63,7 +62,6 @@ class SGDAT(Optimizer):
                             exp_avg.mul_(momentum).add_(grad, alpha=1 - dampening)
 
                         exp_avg.mul_(momentum).add_(grad)
-                        d_p = grad
                         if nesterov:
                             d_p = d_p.add(exp_avg, alpha=momentum)
                         else:
@@ -72,6 +70,6 @@ class SGDAT(Optimizer):
                         p.m.add_(d_p, alpha=-lr)    
 
 
-                        p.data = torch.sign(torch.sign(torch.where(p.m.abs()>(threshold*flip_num+eps), p.m, pre_binary_data)).add(0.1)) 
-                        flip_num.add_(torch.ne(torch.sign(p.data),pre_binary_data)) 
+                        p.data = torch.sign(torch.sign(torch.where(p.m.abs()>(threshold*flip_num+eps), p.m, p.pre_binary_data)).add(0.1)) 
+                        flip_num.add_(torch.ne(torch.sign(p.data),p.pre_binary_data)) 
         return loss
