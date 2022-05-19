@@ -34,6 +34,5 @@ python main_binary.py --model vgg_cifar100_binary --save vgg_cifar100_SGDMAT --d
 #### SGDAT+Momentum(ours) in tiny_imagenet
 python main_binary.py --model vgg_tiny_imagenet_binary --save vgg_tiny_imagenet_SGDMAT --dataset tiny_imagenet --bin_regime "{0: {'optimizer':'SGDAT','lr':1e-4,'momentum':0.9,'threshold':1e-6}}" --binarization det --input_size 64 --epochs 100 -b 256
 
-
 ### Experimental Result
 <img src="image/result.png" width = "80%" />
