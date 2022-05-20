@@ -61,11 +61,10 @@ class SGDAT(Optimizer):
                         if momentum != 0:
                             exp_avg.mul_(momentum).add_(grad, alpha=1 - dampening)
 
-                        exp_avg.mul_(momentum).add_(grad)
-                        if nesterov:
-                            d_p = d_p.add(exp_avg, alpha=momentum)
-                        else:
-                            d_p = exp_avg
+                            if nesterov:
+                                d_p = d_p.add(exp_avg, alpha=momentum)
+                            else:
+                                d_p = exp_avg
 
                         p.m.add_(d_p, alpha=-lr)    
 
