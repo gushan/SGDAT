@@ -52,26 +52,21 @@ class SGDAT(Optimizer):
                         flip_num = state['flip_num']
                         exp_avg = state['exp_avg']
                         d_p = grad
-                        
-                        exp_avg.mul_(momentum).add_(grad)
-                        p.m.add_(exp_avg, alpha=-lr)
+                       
 
-                        p.data = torch.sign(torch.sign(torch.where(p.m.abs()>(threshold*flip_num), p.m, p.pre_binary_data)).add(0.1)) 
+                        if weight_decay != 0:
+                            d_p = d_p.add(p, alpha=weight_decay)
+
+                        if momentum != 0:
+                            exp_avg.mul_(momentum).add_(grad, alpha=1 - dampening)
+
+                            if nesterov:
+                                d_p = d_p.add(exp_avg, alpha=momentum)
+                            else:
+                                d_p = exp_avg
+
+                        p.m.add_(d_p, alpha=-lr)    
+
+                        p.data = torch.sign(torch.sign(torch.where(p.m.abs()>(threshold*flip_num+eps), p.m, p.pre_binary_data)).add(0.1)) 
                         flip_num.add_(torch.ne(torch.sign(p.data),p.pre_binary_data)) 
-
-                        # if weight_decay != 0:
-                        #     d_p = d_p.add(p, alpha=weight_decay)
-
-                        # if momentum != 0:
-                        #     exp_avg.mul_(momentum).add_(grad, alpha=1 - dampening)
-
-                        #     if nesterov:
-                        #         d_p = d_p.add(exp_avg, alpha=momentum)
-                        #     else:
-                        #         d_p = exp_avg
-
-                        # p.m.add_(d_p, alpha=-lr)    
-
-                        # p.data = torch.sign(torch.sign(torch.where(p.m.abs()>(threshold*flip_num+eps), p.m, p.pre_binary_data)).add(0.1)) 
-                        # flip_num.add_(torch.ne(torch.sign(p.data),p.pre_binary_data)) 
         return loss
