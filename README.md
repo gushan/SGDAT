@@ -29,4 +29,5 @@ python main_binary.py --model vgg_cifar100_binary --save vgg_cifar100_SGDAT --da
 python main_binary.py --model vgg_tiny_imagenet_binary --save vgg_tiny_imagenet_SGDAT --dataset tiny_imagenet --bin_regime "{0: {'optimizer':'SGDAT','lr':1e-4,'threshold':1e-6}}" --binarization det --input_size 64 --epochs 100 -b 256
 
 ### Experimental Result
+<img width="1387" alt="image" src="https://user-images.githubusercontent.com/5879042/188252905-96c01cfd-9ca2-4862-8b64-b5a7c2966a12.png">
 
