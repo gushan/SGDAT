@@ -310,6 +310,8 @@ def forward(data_loader, model, criterion, epoch=0, training=True,  bin_optimize
             for p in list(model.parameters()):
                 if hasattr(p,'pre_binary_data'):
                     p.pre_binary_data = p.data.clone()
+                    p.flip_num_epoch = torch.zeros_like(p.data)
+                    p.flip_num_step = torch.zeros_like(p.data)
                 if hasattr(p,'org'):
                     p.data = p.org.clone()
             bin_optimizer.step()
