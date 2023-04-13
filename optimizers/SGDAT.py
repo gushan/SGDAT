@@ -67,6 +67,7 @@ class SGDAT(Optimizer):
 
                         p.m.add_(d_p, alpha=-lr)    
 
-                        p.data = torch.sign(torch.sign(torch.where(p.m.abs()>(threshold*flip_num+eps), p.m, p.pre_binary_data)).add(0.1)) 
+                        temp = threshold*flip_num
+                        p.data = torch.sign(torch.sign(torch.where(p.m.abs()>temp, p.m, p.pre_binary_data)).add(0.1)) 
                         flip_num.add_(torch.ne(torch.sign(p.data),p.pre_binary_data)) 
         return loss
